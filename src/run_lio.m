@@ -9,21 +9,17 @@ function pos = run_lio(config, timeL, accL, gyrL, timeR, accR, gyrR)
 % 输出：
 %   pos 
 
-%% 静止检测
 [stationaryL, stationaryR] = detect_stationary_adaptive(accL, accR, gyrL, gyrR, config);
 
-% --- 单位转换
 accL = accL / 9.81;
 accR = accR / 9.81;
 
 gyrL = rad2deg(gyrL);
 gyrR = rad2deg(gyrR);
 
-%% 姿态 & 加速度旋转到世界系
 
 [accLw, accRw] = estimate_attitude(accL, accR, gyrL, gyrR, timeL, timeR, stationaryL, stationaryR, config);
 
-%% 运行
 vell = zeros(size(accLw));
 posl = zeros(size(accLw));
 posl(1,:) = [0,0,0];
