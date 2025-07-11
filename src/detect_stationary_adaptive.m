@@ -9,24 +9,21 @@ function [stationaryL, stationaryR] = detect_stationary_adaptive(accL, accR, gyr
 % 输出：
 %   stationaryL, stationaryR : 逻辑向量，表示每时刻是否为静止
 
-%% 基本设置
+
 sampleRate = 1 / config.samplePeriod;
 windowLen = round(config.windowLen_sec * sampleRate);
 slipstride = config.slipstride;
 minPeakHeight = config.minPeakHeight;
 
-% 滤波器参数
 [b_lp, a_lp]   = butter(1, (2*5)/sampleRate, 'low');
 [b_hp, a_hp]   = butter(1, (2*10)/sampleRate, 'high');
 [b_lp2, a_lp2] = butter(1, (2*11)/sampleRate, 'low');
 
-%% 模长计算
 accMagL = sqrt(sum(accL.^2, 2));
 accMagR = sqrt(sum(accR.^2, 2));
 gyrMagL = sqrt(sum(gyrL.^2, 2));
 gyrMagR = sqrt(sum(gyrR.^2, 2));
 
-% 滤波
 accMagL_filt = filtfilt(b_lp, a_lp, accMagL);
 accMagR_filt = filtfilt(b_lp, a_lp, accMagR);
 gyrL_filt = abs(filtfilt(b_hp, a_hp, gyrMagL));
@@ -40,7 +37,6 @@ N = length(accMagL);
 stationaryL = false(N,1);
 stationaryR = false(N,1);
 
-%% 滑动窗口 + 步频估计 + 动态阈值
 for i = 1:slipstride:(N - windowLen)
     idx = i:(i + windowLen - 1);
 
